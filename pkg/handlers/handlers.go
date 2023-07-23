@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/thanhquy1105/Go-BasicBackend/pkg/config"
+	"github.com/thanhquy1105/Go-BasicBackend/pkg/models"
 	"github.com/thanhquy1105/Go-BasicBackend/pkg/render"
 )
 
@@ -24,9 +25,16 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.page.tmpl")
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about.page.tmpl")
+
+	stringMap := make(map[string]string)
+
+	stringMap["test"] = "Hello"
+
+	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
