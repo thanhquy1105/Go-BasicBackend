@@ -7,29 +7,37 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/thanhquy1105/Go-BasicBackend/pkg/config"
 )
 
 var functions = template.FuncMap{}
 
+var app *config.AppConfig
+
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
 func RenderTemplate(w http.ResponseWriter, tmpl string) {
+	var tc map[string]*template.Template
 
-	tc, err := CreateTemplateCache()
-
-	if err != nil {
-		log.Fatal(err)
+	if app.UseCache {
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
 	}
 
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("Could not get template from template cache")
 	}
 
 	buf := new(bytes.Buffer)
 
 	t.Execute(buf, nil)
 
-	_, err = buf.WriteTo(w)
-
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("Error writing template to browser", err)
 	}
